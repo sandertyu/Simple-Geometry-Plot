@@ -13,7 +13,7 @@ import bicycleparameters as bp
 def draw_plot():
     bike = bp.Bicycle("Benchmark", pathToData=os.getcwd()+"\\data")
     plot = bike.plot_bicycle_geometry()
-    plot.savefig('\\assets\\plot.png')
+    plot.savefig(os.getcwd()+'\\assets\\plot.png')
 draw_plot()
 
 app = dash.Dash(__name__)
@@ -24,7 +24,7 @@ app.layout = html.Div([
                 id="plot-button",
                 type="button",
                 n_clicks=0),
-    html.Img(src='/assets/plot.png',  # Why does this work without a file in this location? (It works inconsistently??)
+    html.Img(src='/assets/plot.png',  
              alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
              id="geometry-plot",
              width="640",
