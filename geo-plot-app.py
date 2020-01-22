@@ -1,7 +1,8 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 import os
 import bicycleparameters as bp
@@ -9,23 +10,39 @@ import bicycleparameters as bp
 ###!!!Must ensure that current working directory is set to directory immediatly containing '\data\'!!!###
 ###---------------------------------------------------------------------------------------------------###
 
+    # Initializes Benchmark and draws the geometry plot 
+def new_plot():
+    bike = bp.Bicycle("Benchmark", pathToData=os.getcwd()+"\\data")
+    plot = bike.plot_bicycle_geometry()
+    plot.savefig(os.getcwd()+'\\assets\\user-bikes\\dummy.png')
+
+OPTIONS=['Benchmark',
+         'Browser',
+         'Browserins',
+         'Crescendo',
+         'Fisher',
+         'Pista',
+         'Rigid',
+         'Silver',
+         'Tms',
+         'Yellow',
+         'Yellowrev']
+
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
     html.H1('Bicycle Geometry Plot'),
     dcc.Dropdown(id="bike-dropdown",
-                 options=[{'label': 'Benchmark', 'value': 'Benchmark'},
-                          {'label': 'Browser', 'value': 'Browser'},
-                          {'label': 'Browserins', 'value': 'Browserins'},
-                          {'label': 'Crescendo', 'value': 'Crescendo'},
-                          {'label': 'Fisher', 'value': 'Fisher'},
-                          {'label': 'Pista', 'value': 'Pista'},
-                          {'label': 'Rigid', 'value': 'Rigid'},
-                          {'label': 'Silver', 'value': 'Silver'},
-                          {'label': 'Tms', 'value': 'Tms'},
-                          {'label': 'Yellow', 'value': 'Yellow'},
-                          {'label': 'Yellowrev', 'value': 'Yellowrev'}],
-                 value='Benchmark') , 
+                 value='Benchmark',
+                 options=[{'label': i, 'value': i} for i in OPTIONS]), 
+    html.Div([html.H2(['Enter the Name of your New Bike Here!',
+                       dcc.Input(id='bike-input',
+                                value='', 
+                                type='text')]),
+              html.Button('Create Dummy Bicycle Plot!',
+                 id='add-button',
+                 type='button',
+                 n_clicks=0)]),
     html.Img(src='',  
              alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
              id="geometry-plot",
@@ -33,35 +50,25 @@ app.layout = html.Div([
              height="480"),
 ])
 
-    # Updates image path with dropdown value
+    # Updates html.Img path with Dropdown value
 @app.callback(Output('geometry-plot', 'src'), [Input('bike-dropdown', 'value')])
 def reveal_plot(value):
-    image = str(value)+'.png'
-    path = '/assets/defaults/'+image
-    return path
+    image = value+'.png'
+    if os.path.exists(os.getcwd()+'\\assets\\defaults\\'+image):        
+        return '/assets/defaults/'+image
+    else: 
+        return '/assets/user-bikes/'+image
+
+    # Accesses /data/ and draws plot of user input, then adds user input to Dropdown list 
+@app.callback(Output('bike-dropdown', 'options'), [Input('add-button', 'n_clicks')], [State('bike-input', 'value')])
+def add_option(n_clicks, value):
+    if value == '':
+        raise PreventUpdate      
+    else:
+        #new_plot()  # refreshes page after this command is called, removing the added value from list
+        OPTIONS.append(value)  # Find way to alphabetize this list
+        return [{'label': i, 'value': i} for i in OPTIONS]
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-#(For safe keeping)
-''' 
-html.Button("Calculate Geometry Plot",  
-                id="calculate-button",
-                type="button",
-                n_clicks=0),
-'''
-
-'''
-### Initializes Benchmark and draws the geometry plot ###
-def new_plot():
-    bike = bp.Bicycle("Benchmark", pathToData=os.getcwd()+"\\data")
-    plot = bike.plot_bicycle_geometry()
-    plot.savefig(os.getcwd()+'\\assets\\plot.png')
-'''
-
-'''
-    # Change to add to list of plots, but not actually show it
-@app.callback(Output('geometry-plot', 'src'), [Input('calculate-button', 'n_clicks')])
-def calculate_geo_plot(n_clicks):
-    return draw_plot()
-'''
