@@ -14,7 +14,6 @@ def draw_plot():
     bike = bp.Bicycle("Benchmark", pathToData=os.getcwd()+"\\data")
     plot = bike.plot_bicycle_geometry()
     plot.savefig(os.getcwd()+'\\assets\\plot.png')
-draw_plot()
 
 app = dash.Dash(__name__)
 
@@ -30,12 +29,11 @@ app.layout = html.Div([
              width="640",
              height="480")
 ])
-'''
-@app.callback(Output('output-state', 'children'),
-              [Input('plot-button', 'n_clicks')],
+
+@app.callback(Output('geometry-plot', ''),
+              [Input('plot-button', 'n_clicks')])
 def update_output(n_clicks):
     return draw_plot()
-        format(n_clicks, input1, input2)
-'''
+
 if __name__ == '__main__':
     app.run_server(debug=True)
