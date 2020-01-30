@@ -12,7 +12,7 @@ import bicycleparameters as bp
 
     # Initializes Benchmark and draws the geometry plot 
 def new_plot():
-    bike = bp.Bicycle("Benchmark", pathToData=os.getcwd()+"\\data")
+    bike = bp.Bicycle('Benchmark', pathToData=os.getcwd()+'\\data')
     plot = bike.plot_bicycle_geometry()
     plot.savefig(os.getcwd()+'\\assets\\user-bikes\\dummy.png')
 
@@ -33,7 +33,7 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1('Bicycle Geometry Plot',
              id='main-header'),
-    dcc.Dropdown(id="bike-dropdown",
+    dcc.Dropdown(id='bike-dropdown',
                  value='Benchmark',
                  options=[{'label': i, 'value': i} for i in OPTIONS]), 
     html.Div([html.H2('Enter the Name of your New Bike Here!'),
@@ -46,17 +46,29 @@ app.layout = html.Div([
                           n_clicks=0)]),
     html.Img(src='',  
              alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
-             id="geometry-plot",)
+             id='geometry-plot',),
+    html.Img(src='',
+             alt='A plot revealing the eigenvalues of the bicycle system as a function of speed.',
+             id='eigen-plot')
 ])
 
-    # Updates html.Img path with Dropdown value
+    # Updates geometry-plot path with Dropdown value
 @app.callback(Output('geometry-plot', 'src'), [Input('bike-dropdown', 'value')])
-def reveal_plot(value):
+def reveal_geo_plot(value):
     image = value+'.png'
-    if os.path.exists(os.getcwd()+'\\assets\\defaults\\'+image):        
-        return '/assets/defaults/'+image
+    if os.path.exists(os.getcwd()+'\\assets\\geo-plots\\defaults\\'+image):        
+        return '/assets/geo-plots/defaults/'+image
     else: 
-        return '/assets/user-bikes/'+image
+        return '/assets/geo-plots/user-bikes/'+image
+
+    # Updates eigen-plot path with Dropdown value
+@app.callback(Output('eigen-plot', 'src'), [Input('bike-dropdown', 'value')])
+def reveal_geo_plot(value):
+    image = value+'.png'
+    if os.path.exists(os.getcwd()+'\\assets\\eigen-plots\\defaults\\'+image):        
+        return '/assets/eigen-plots/defaults/'+image
+    else: 
+        return '/assets/eigen-plots/user-bikes/'+image
 
     # Accesses /data/ and draws plot of user input, then adds user input to Dropdown list 
 @app.callback(Output('bike-dropdown', 'options'), [Input('add-button', 'n_clicks')], [State('bike-input', 'value')])
