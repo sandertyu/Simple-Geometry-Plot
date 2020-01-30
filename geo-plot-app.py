@@ -26,12 +26,13 @@ OPTIONS=['Benchmark',
          'Silver',
          'Tms',
          'Yellow',
-         'Yellowrev']
+         'Yellowrev']               
 
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1('Bicycle Geometry Plot'),
+    html.H1('Bicycle Geometry Plot',
+             id='main-header'),
     dcc.Dropdown(id="bike-dropdown",
                  value='Benchmark',
                  options=[{'label': i, 'value': i} for i in OPTIONS]), 
@@ -45,9 +46,7 @@ app.layout = html.Div([
                  n_clicks=0)]),
     html.Img(src='',  
              alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
-             id="geometry-plot",
-             width="640",
-             height="480"),
+             id="geometry-plot",)
 ])
 
     # Updates html.Img path with Dropdown value
@@ -68,7 +67,6 @@ def add_option(n_clicks, value):
         #new_plot()  # refreshes page after this command is called, removing the added value from list
         OPTIONS.append(value)  # Find way to alphabetize this list
         return [{'label': i, 'value': i} for i in OPTIONS]
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)

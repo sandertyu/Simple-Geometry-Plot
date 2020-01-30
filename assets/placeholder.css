@@ -1,0 +1,13 @@
+body {
+	background-color: darkgrey;
+}
+
+#main-header {
+	color: rebeccapurple;
+}
+
+#geometry-plot {
+	width: 640;
+	height: 480;
+}
+
