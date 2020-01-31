@@ -11,10 +11,10 @@ import bicycleparameters as bp
 ###---------------------------------------------------------------------------------------------------###
 
     # Initializes Benchmark and draws the geometry plot 
-def new_plot():
+def new_geo_plot():
     bike = bp.Bicycle('Benchmark', pathToData=os.getcwd()+'\\data')
     plot = bike.plot_bicycle_geometry()
-    plot.savefig(os.getcwd()+'\\assets\\user-bikes\\dummy.png')
+    plot.savefig(os.getcwd()+'\\assets\\geo-plots\\user-bikes\\dummy.png')
 
 OPTIONS=['Benchmark',
          'Browser',
@@ -32,24 +32,47 @@ app = dash.Dash(__name__)
 
 app.layout = html.Div([
     html.H1('Bicycle Geometry Plot',
-             id='main-header'),
+            id='main-header'),
     dcc.Dropdown(id='bike-dropdown',
                  value='Benchmark',
                  options=[{'label': i, 'value': i} for i in OPTIONS]), 
-    html.Div([html.H2('Enter the Name of your New Bike Here!'),
-              dcc.Input(id='bike-input',
-                        value='', 
-                        type='text'),
-              html.Button('Create Dummy Bicycle Plot!',
-                          id='add-button',
-                          type='button',
-                          n_clicks=0)]),
-    html.Img(src='',  
-             alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
-             id='geometry-plot',),
-    html.Img(src='',
-             alt='A plot revealing the eigenvalues of the bicycle system as a function of speed.',
-             id='eigen-plot')
+    html.Div(id='parameter-bin',
+             children=[html.Div(id='wheel-bin', children=[
+                                dcc.Input(id='front-diameter',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='rear-diameter',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='front-mass',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='rear-mass',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='front-lxx-lyy',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='rear-lxx-lyy',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='front-lzz',
+                                          value='', 
+                                          type='text'),
+                                dcc.Input(id='bike-input',
+                                          value='', 
+                                          type='text')])]),
+    html.Button('Create Dummy Bicycle Plot!',
+                id='add-button',
+                type='button',
+                n_clicks=0),
+    html.Div(id='image-bin',
+             children=[html.Img(src='',  
+                                alt='A plot revealing the general geometry, centers of mass and moments of inertia of the given bicycle system.',
+                                id='geometry-plot',),
+                       html.Img(src='',
+                                alt='A plot revealing the eigenvalues of the bicycle system as a function of speed.',
+                                id='eigen-plot')])
 ])
 
     # Updates geometry-plot path with Dropdown value
@@ -76,8 +99,9 @@ def add_option(n_clicks, value):
     if value == '':
         raise PreventUpdate      
     else:
-        #new_plot()  # refreshes page after this command is called, removing the added value from list
-        OPTIONS.append(value)  # Find way to alphabetize this list
+        #new_geo_plot()  # DEBUG # - refreshes page after this command is called, removing the added value from list
+        OPTIONS.append(value)  
+        OPTIONS.sort() # Find way to alphabetize this list
         return [{'label': i, 'value': i} for i in OPTIONS]
 
 if __name__ == '__main__':

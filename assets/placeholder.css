@@ -1,5 +1,5 @@
 body {
-	background-color: darkgrey;
+	background-color: grey;
 }
 
 #main-header {
@@ -11,3 +11,10 @@ body {
 	height: 480;
 }
 
+#eigen-plot {
+	
+}
+
+#image-bin {
+	background-color: lightgrey;
+}
